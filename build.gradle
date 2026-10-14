@@ -15,7 +15,7 @@ subprojects {
     repositories {
         mavenCentral()
         maven { url "https://www.cursemaven.com" }
-        maven { url "file://${rootDir}/publishing" }
+        maven { url = rootProject.file("publishing") }
         maven { url = "https://api.modrinth.com/maven" }
         maven { url "https://maven.bai.lol" }
         maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
@@ -37,7 +37,7 @@ subprojects {
         }
         repositories {
             maven {
-                url "file://${rootDir}/publishing"
+                url = rootProject.file("publishing")
             }
         }
     }
