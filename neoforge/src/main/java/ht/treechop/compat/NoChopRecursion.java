@@ -13,7 +13,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import java.util.HashMap;
 import java.util.Map;
 
-@EventBusSubscriber(modid = TreeChop.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = TreeChop.MOD_ID)
 public class NoChopRecursion {
 
     static private final Map<Player, Long> lastChopTickByPlayers = new HashMap<>();

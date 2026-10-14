@@ -25,7 +25,6 @@ public class TreeChopFabricAPITest {
     public static void onTagsUpdated() {
         if (api != null) {
             TreeChop.initUsingAPI(api);
-            Terraformers.init(api); // TODO: find me a home
         }
     }
 }

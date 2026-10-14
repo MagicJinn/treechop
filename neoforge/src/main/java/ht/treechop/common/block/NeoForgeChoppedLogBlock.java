@@ -1,6 +1,5 @@
 package ht.treechop.common.block;
 
-import ht.treechop.client.model.NeoForgeChoppedLogBakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -14,9 +13,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -104,17 +100,6 @@ public class NeoForgeChoppedLogBlock extends ChoppedLogBlock {
     public static class MyEntity extends ChoppedLogBlock.MyEntity {
         public MyEntity(BlockPos pos, BlockState blockState) {
             super(pos, blockState);
-        }
-
-        @Override
-        public @NotNull ModelData getModelData() {
-            return NeoForgeChoppedLogBakedModel.getModelData(this);
-        }
-
-        @Override
-        protected void rerender() {
-            super.rerender();
-            requestModelDataUpdate();
         }
     }
 }

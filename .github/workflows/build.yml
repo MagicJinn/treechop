@@ -1,0 +1,36 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: gradle
+
+      - name: Build all loaders
+        run: ./gradlew build -x :tuber:test --no-daemon
+
+      - name: Upload Fabric jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: treechop-fabric
+          path: fabric/build/libs/*.jar
+          if-no-files-found: error
+
+      - name: Upload NeoForge jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: treechop-neoforge
+          path: neoforge/build/libs/*.jar
+          if-no-files-found: error

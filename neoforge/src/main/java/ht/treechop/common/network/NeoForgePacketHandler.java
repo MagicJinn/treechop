@@ -1,14 +1,12 @@
 package ht.treechop.common.network;
 
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
-public abstract class NeoForgePacketHandler {
+public final class NeoForgePacketHandler {
 
-    @SubscribeEvent
+    private NeoForgePacketHandler() {}
+
     public static void register(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar("treechop");
 

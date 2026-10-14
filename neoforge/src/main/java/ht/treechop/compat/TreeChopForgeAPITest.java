@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 /**
  * This is totally unnecessary - just testing the API
  */
-@EventBusSubscriber(modid = TreeChop.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = TreeChop.MOD_ID)
 public class TreeChopForgeAPITest {
 
     private static TreeChopAPI api = null;

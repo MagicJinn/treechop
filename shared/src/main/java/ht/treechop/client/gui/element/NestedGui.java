@@ -85,27 +85,5 @@ public abstract class NestedGui extends AbstractWidget implements ContainerEvent
         return Optional.empty();
     }
 
-    @Override
-    public boolean mouseClicked(double x, double y, int button) {
-        for(GuiEventListener guieventlistener : this.children()) {
-            if (guieventlistener.mouseClicked(x, y, button)) {
-                this.setFocused(guieventlistener);
-                if (button == 0) {
-                    this.setDragging(true);
-                }
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean mouseReleased(double x, double y, int button) {
-        this.setDragging(false);
-        return this.getChildAt(x, y).filter((child) -> child.mouseReleased(x, y, button)).isPresent();
-    }
-
     public void expand(int width) {}
 }

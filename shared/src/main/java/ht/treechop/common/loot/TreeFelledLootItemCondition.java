@@ -2,31 +2,30 @@ package ht.treechop.common.loot;
 
 import com.mojang.serialization.MapCodec;
 import ht.treechop.TreeChop;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.context.ContextKey;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
 import java.util.Collections;
 import java.util.Set;
 
 public record TreeFelledLootItemCondition() implements LootItemCondition {
-    public static final ResourceLocation ID = TreeChop.resource("tree_felled");
+    public static final Identifier ID = TreeChop.resource("tree_felled");
     static final TreeFelledLootItemCondition INSTANCE = new TreeFelledLootItemCondition();
     public static final MapCodec<TreeFelledLootItemCondition> CODEC = MapCodec.unit(INSTANCE);
-    public static final LootItemConditionType TYPE = new LootItemConditionType(CODEC);
 
-    public LootItemConditionType getType() {
-        return TYPE;
+    @Override
+    public MapCodec<? extends LootItemCondition> codec() {
+        return CODEC;
     }
 
-    public Set<ContextKey<?>> getReferencedContextParams() {
+    @Override
+    public Set<net.minecraft.util.context.ContextKey<?>> getReferencedContextParams() {
         return Collections.emptySet();
     }
 
     public boolean test(LootContext context) {
-        Boolean destroying = context.getOptionalParameter(TreeChopLootContextParams.DESTROY_BLOCK);
+        Boolean destroying = context.getOptional(TreeChopLootContextParams.DESTROY_BLOCK);
         return destroying == null || destroying;
     }
 }

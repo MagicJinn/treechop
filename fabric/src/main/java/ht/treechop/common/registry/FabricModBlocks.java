@@ -2,10 +2,11 @@ package ht.treechop.common.registry;
 
 import ht.treechop.TreeChop;
 import ht.treechop.common.block.FabricChoppedLogBlock;
+import ht.treechop.common.block.PolymerFabricChoppedLogBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -17,7 +18,7 @@ import net.minecraft.world.level.material.MapColor;
 public class FabricModBlocks {
     public static final TagKey<Block> CHOPPABLES = TagKey.create(Registries.BLOCK, TreeChop.resource("choppables"));
 
-    public static final Block CHOPPED_LOG = new FabricChoppedLogBlock(
+    public static final Block CHOPPED_LOG = new PolymerFabricChoppedLogBlock(
             BlockBehaviour.Properties.of()
                     .setId(ResourceKey.create(Registries.BLOCK, TreeChop.resource("chopped_log")))
                     .mapColor(MapColor.WOOD)

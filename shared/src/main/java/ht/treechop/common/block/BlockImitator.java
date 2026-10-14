@@ -37,36 +37,15 @@ public abstract class BlockImitator extends Block {
     }
 
     @Override
-    public void fallOn(Level level, BlockState blockState, BlockPos pos, Entity entity, float speed) {
+    public void fallOn(Level level, BlockState blockState, BlockPos pos, Entity entity, double speed) {
         BlockState imitatedBlockState = getImitatedBlockState(level, pos);
         imitatedBlockState.getBlock().fallOn(level, imitatedBlockState, pos, entity, speed);
-    }
-
-    @Override
-    public @NotNull ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState blockState, boolean includeData) {
-        BlockState imitatedBlockState = getImitatedBlockState(level, pos);
-        return imitatedBlockState.getCloneItemStack(level, pos, includeData);
     }
 
     @Override
     public void handlePrecipitation(BlockState blockState, Level level, BlockPos pos, Biome.Precipitation precipitation) {
         BlockState imitatedBlockState = getImitatedBlockState(level, pos);
         imitatedBlockState.getBlock().handlePrecipitation(imitatedBlockState, level, pos, precipitation);
-    }
-
-    @Override
-    public int getLightBlock(BlockState blockState) {
-        return super.getLightBlock(blockState);
-    }
-
-    @Override
-    public float getShadeBrightness(BlockState blockState, BlockGetter level, BlockPos pos) {
-        return super.getShadeBrightness(blockState, level, pos);
-    }
-
-    @Override
-    public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos pos) {
-        return getImitatedBlockState(level, pos).getAnalogOutputSignal(level, pos);
     }
 
     @Override

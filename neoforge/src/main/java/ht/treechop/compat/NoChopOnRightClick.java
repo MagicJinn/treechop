@@ -15,7 +15,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-@EventBusSubscriber(modid = TreeChop.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = TreeChop.MOD_ID)
 public class NoChopOnRightClick {
 
     private static final Map<Entity, Long> lastRightClickTickByPlayers = new HashMap<>();

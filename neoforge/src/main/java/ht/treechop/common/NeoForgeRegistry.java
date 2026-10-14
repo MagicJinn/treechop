@@ -11,7 +11,8 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -43,13 +44,13 @@ public class NeoForgeRegistry {
     }
 
     public static class LootConditionTypes {
-        public static final DeferredRegister<LootItemConditionType> REGISTRY =
+        public static final DeferredRegister<MapCodec<? extends LootItemCondition>> REGISTRY =
                 DeferredRegister.create(net.minecraft.core.registries.Registries.LOOT_CONDITION_TYPE, TreeChop.MOD_ID);
 
-        public static final Supplier<LootItemConditionType> COUNT_BLOCK_CHOPS =
-                REGISTRY.register(CountBlockChopsLootItemCondition.ID.getPath(), () -> CountBlockChopsLootItemCondition.TYPE);
+        public static final Supplier<MapCodec<? extends LootItemCondition>> COUNT_BLOCK_CHOPS =
+                REGISTRY.register(CountBlockChopsLootItemCondition.ID.getPath(), () -> CountBlockChopsLootItemCondition.CODEC);
 
-        public static final Supplier<LootItemConditionType> TREE_FELLED =
-                REGISTRY.register(TreeFelledLootItemCondition.ID.getPath(), () -> TreeFelledLootItemCondition.TYPE);
+        public static final Supplier<MapCodec<? extends LootItemCondition>> TREE_FELLED =
+                REGISTRY.register(TreeFelledLootItemCondition.ID.getPath(), () -> TreeFelledLootItemCondition.CODEC);
     }
 }

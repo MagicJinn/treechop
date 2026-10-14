@@ -1,4 +1,5 @@
 package ht.treechop.client.gui.screen;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import ht.treechop.TreeChop;
 import ht.treechop.client.Client;
@@ -11,7 +12,7 @@ import ht.treechop.common.settings.Setting;
 import ht.treechop.common.settings.SettingsField;
 import ht.treechop.common.settings.SneakBehavior;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
@@ -51,7 +52,7 @@ public class ClientSettingsScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(parent);
+        Minecraft.getInstance().gui.setScreen(parent);
     }
 
     private void rebuild() {
@@ -86,7 +87,7 @@ public class ClientSettingsScreen extends Screen {
         );
 
         int titleTop = optionsList.getY() - SPACE_ABOVE_AND_BELOW_LIST - GUIUtil.TEXT_LINE_HEIGHT;
-        addRenderableWidget(new StringWidget(0, titleTop, this.width, TEXT_HEIGHT, this.title, this.font).alignCenter());
+        addRenderableWidget(new StringWidget(0, titleTop, this.width, TEXT_HEIGHT, this.title, this.font));
     }
 
     private void placeOptionsList() {
@@ -238,7 +239,7 @@ public class ClientSettingsScreen extends Screen {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTicks) {
+    public void extractRenderState(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTicks) {
         if (needToRebuild) {
             clearWidgets();
             rebuild();
@@ -247,7 +248,7 @@ public class ClientSettingsScreen extends Screen {
 
         doneButton.setY(getDoneButtonTop());
 
-        super.render(gui, mouseX, mouseY, partialTicks);
+        super.extractRenderState(gui, mouseX, mouseY, partialTicks);
         // TODO: check out ClientSettingsScreen.func_243293_a for draw reordering; might be important for tooltips
 
         if (ConfigHandler.CLIENT.showTooltips.get()) {
