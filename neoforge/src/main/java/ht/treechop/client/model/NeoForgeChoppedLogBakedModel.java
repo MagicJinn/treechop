@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -37,18 +38,19 @@ public class NeoForgeChoppedLogBakedModel extends ChoppedLogBakedModel implement
 
     public static void overrideBlockStateModels(ModelEvent.ModifyBakingResult event) {
         ModelResourceLocation oakLog = BlockModelShaper.stateToModelLocation(Blocks.OAK_LOG.defaultBlockState());
-        NeoForgeChoppedLogBakedModel.setDefaultSprite(event.getModels().get(oakLog).getParticleIcon());
+        Map<ModelResourceLocation, BakedModel> bakedModels = event.getBakingResult().blockStateModels();
+        NeoForgeChoppedLogBakedModel.defaultSprite = bakedModels.get(oakLog).getParticleIcon();
 
         for (BlockState blockState : NeoForgeRegistry.Blocks.CHOPPED_LOG.get().getStateDefinition().getPossibleStates()) {
             ModelResourceLocation variantMRL = BlockModelShaper.stateToModelLocation(blockState);
-            BakedModel existingModel = event.getModels().get(variantMRL);
+            BakedModel existingModel = bakedModels.get(variantMRL);
             if (existingModel == null) {
                 TreeChop.LOGGER.warn("Did not find the expected vanilla baked model(s) for treechop:chopped_log in registry");
             } else if (existingModel instanceof NeoForgeChoppedLogBakedModel) {
                 TreeChop.LOGGER.warn("Tried to replace ChoppedLogBakedModel twice");
             } else {
                 BakedModel customModel = new NeoForgeChoppedLogBakedModel();
-                event.getModels().put(variantMRL, customModel);
+                bakedModels.put(variantMRL, customModel);
             }
         }
     }
@@ -103,5 +105,4 @@ public class NeoForgeChoppedLogBakedModel extends ChoppedLogBakedModel implement
     private <T> T or(T value, T fallback) {
         return value != null ? value : fallback;
     }
-
 }

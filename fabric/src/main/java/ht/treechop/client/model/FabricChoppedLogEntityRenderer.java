@@ -22,15 +22,11 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class FabricChoppedLogEntityRenderer extends FabricChoppedLogBakedModel implements BlockEntityRenderer<FabricChoppedLogBlock.MyEntity> {
-    protected final TextureAtlasSprite defaultSprite;
     private final RandomSource random = RandomSource.create();
     private final BlockRenderDispatcher blockRenderer;
 
     @SuppressWarnings("deprecation")
     public FabricChoppedLogEntityRenderer(BlockEntityRendererProvider.Context context) {
-        this.defaultSprite = Minecraft.getInstance().getModelManager()
-                .getAtlas(TextureAtlas.LOCATION_BLOCKS)
-                .getSprite(DEFAULT_TEXTURE_RESOURCE);
         this.blockRenderer = context.getBlockRenderDispatcher();
     }
 
@@ -40,8 +36,9 @@ public class FabricChoppedLogEntityRenderer extends FabricChoppedLogBakedModel i
         if (level != null) {
             BlockPos pos = entity.getBlockPos();
 
+            BakedModel bakedModel = getQuadsAsBakedModel(level, entity.getOriginalState(), pos, random);
             this.blockRenderer.getModelRenderer().tesselateBlock(level,
-                    getQuadsAsBakedModel(level, entity.getOriginalState(), pos, () -> random),
+                    bakedModel,
                     entity.getBlockState(),
                     pos,
                     poseStack,
@@ -53,7 +50,7 @@ public class FabricChoppedLogEntityRenderer extends FabricChoppedLogBakedModel i
         }
     }
 
-    private BakedModel getQuadsAsBakedModel(Level level, BlockState originalState, BlockPos pos, Supplier<RandomSource> random) {
+    private BakedModel getQuadsAsBakedModel(Level level, BlockState originalState, BlockPos pos, RandomSource random) {
         List<BakedQuad> quads = new LinkedList<>();
         emitBlockQuads(level, originalState, pos, random, quads::add);
         return new HiddenChoppedLogBakedModel(quads);
