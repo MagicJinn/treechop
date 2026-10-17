@@ -26,12 +26,6 @@
     ],
     "server": [
       "ht.treechop.server.FabricServer"
-    ],
-    "jade": [
-      "ht.treechop.compat.Jade"
-    ],
-    "modmenu": [
-      "ht.treechop.compat.ModMenu"
     ]
   },
   "mixins": [
@@ -43,8 +37,9 @@
     "fabricloader": "*",
     "fabric-api": "*",
     "minecraft": "~${minecraft_version}",
-    "java": ">=21"
+    "java": ">=25"
   },
   "suggests": {
+    "polymer-bundled": "*"
   }
 }

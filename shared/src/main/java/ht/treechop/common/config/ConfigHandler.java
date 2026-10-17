@@ -11,8 +11,9 @@ import ht.treechop.compat.HugeMushroomHandler;
 import ht.treechop.compat.LeafDecayOverrides;
 import ht.treechop.compat.ProblematicLeavesTreeHandler;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +21,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -124,26 +124,27 @@ public class ConfigHandler {
     }
 
     private static Block inferUnstripped(Block block) {
-        ResourceLocation resource = BuiltInRegistries.BLOCK.getKey(block);
+        Identifier resource = BuiltInRegistries.BLOCK.getKey(block);
         return inferUnstripped(resource);
     }
 
-    private static Block inferUnstripped(ResourceLocation resource) {
+    private static Block inferUnstripped(Identifier resource) {
         if (resource != null) {
-            ResourceLocation unstripped = getFilteredResourceLocation(resource, "stripped");
+            Identifier unstripped = getFilteredResourceLocation(resource, "stripped");
             if (unstripped != null) {
-                return BuiltInRegistries.BLOCK.get(unstripped);
+                Optional<Holder.Reference<Block>> ref = BuiltInRegistries.BLOCK.get(unstripped);
+                return ref.map(Holder.Reference::value).orElse(Blocks.AIR);
             }
         }
         return Blocks.AIR;
     }
 
-    private static ResourceLocation getFilteredResourceLocation(ResourceLocation resource, String filterTerm) {
+    private static Identifier getFilteredResourceLocation(Identifier resource, String filterTerm) {
         if (resource != null) {
             String strippedPath = resource.getPath();
             String unstrippedPath = Arrays.stream(strippedPath.split("_")).filter(token -> !token.equals(filterTerm)).collect(Collectors.joining("_"));
             if (!strippedPath.equals(unstrippedPath)) {
-                return ResourceLocation.fromNamespaceAndPath(resource.getNamespace(), unstrippedPath);
+                return Identifier.fromNamespaceAndPath(resource.getNamespace(), unstrippedPath);
             }
         }
         return null;

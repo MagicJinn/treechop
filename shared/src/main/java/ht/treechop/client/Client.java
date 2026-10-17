@@ -58,10 +58,10 @@ public abstract class Client {
 
     public static void toggleSettingsOverlay() {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.screen instanceof ClientSettingsScreen) {
-            minecraft.screen.onClose();
+        if (minecraft.gui.screen() instanceof ClientSettingsScreen settingsScreen) {
+            settingsScreen.onClose();
         } else {
-            minecraft.setScreen(new ClientSettingsScreen());
+            minecraft.gui.setScreen(new ClientSettingsScreen());
         }
     }
 
@@ -86,7 +86,11 @@ public abstract class Client {
     public static void handleUpdateChopsPacket(BlockPos pos, CompoundTag tag) {
         Level level = Minecraft.getInstance().level;
         if (level != null && level.getBlockEntity(pos) instanceof ChoppedLogBlock.MyEntity entity) {
-            entity.loadWithComponents(tag, level.registryAccess());
+            entity.loadWithComponents(net.minecraft.world.level.storage.TagValueInput.create(
+                    net.minecraft.util.ProblemReporter.DISCARDING,
+                    level.registryAccess(),
+                    tag
+            ));
         }
     }
 

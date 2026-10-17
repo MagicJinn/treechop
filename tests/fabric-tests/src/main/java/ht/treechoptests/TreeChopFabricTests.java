@@ -4,7 +4,7 @@ import ht.treechoptests.registry.FabricModBlocks;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 
@@ -15,7 +15,7 @@ public class TreeChopFabricTests implements ModInitializer {
         Registry.register(BuiltInRegistries.ITEM, resource("test"), new BlockItem(FabricModBlocks.TEST_BLOCK, new FabricItemSettings().group(CreativeModeTab.TAB_MISC)));
     }
 
-    public static ResourceLocation resource(String path) {
-        return ResourceLocation.fromNamespaceAndPath("treechoptests", path);
+    public static Identifier resource(String path) {
+        return Identifier.fromNamespaceAndPath("treechoptests", path);
     }
 }

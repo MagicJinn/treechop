@@ -5,12 +5,14 @@ import ht.treechop.common.block.NeoForgeChoppedLogBlock;
 import ht.treechop.common.loot.CountBlockChopsLootItemCondition;
 import ht.treechop.common.loot.TreeFelledLootItemCondition;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -23,6 +25,7 @@ public class NeoForgeRegistry {
         public static final DeferredHolder<Block, NeoForgeChoppedLogBlock> CHOPPED_LOG = REGISTRY.register("chopped_log",
                 () -> new NeoForgeChoppedLogBlock(
                         Block.Properties.of()
+                                .setId(ResourceKey.create(Registries.BLOCK, TreeChop.resource("chopped_log")))
                                 .mapColor(blockState -> MapColor.WOOD)
                                 .instrument(NoteBlockInstrument.BASS)
                                 .strength(2.0F)
@@ -34,19 +37,20 @@ public class NeoForgeRegistry {
 
     public static class BlockEntities {
         public static final DeferredRegister<BlockEntityType<?>> REGISTRY = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, TreeChop.MOD_ID);
-        public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NeoForgeChoppedLogBlock.MyEntity>> CHOPPED_LOG_ENTITY = REGISTRY.register("chopped_log",
-                () -> BlockEntityType.Builder.of(NeoForgeChoppedLogBlock.MyEntity::new, Blocks.CHOPPED_LOG.get()).build(null)
+        public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NeoForgeChoppedLogBlock.MyEntity>> CHOPPED_LOG_ENTITY = REGISTRY.register(
+                "chopped_log",
+                () -> new BlockEntityType<>(NeoForgeChoppedLogBlock.MyEntity::new, Blocks.CHOPPED_LOG.get())
         );
     }
 
     public static class LootConditionTypes {
-        public static final DeferredRegister<LootItemConditionType> REGISTRY =
+        public static final DeferredRegister<MapCodec<? extends LootItemCondition>> REGISTRY =
                 DeferredRegister.create(net.minecraft.core.registries.Registries.LOOT_CONDITION_TYPE, TreeChop.MOD_ID);
 
-        public static final Supplier<LootItemConditionType> COUNT_BLOCK_CHOPS =
-                REGISTRY.register(CountBlockChopsLootItemCondition.ID.getPath(), () -> CountBlockChopsLootItemCondition.TYPE);
+        public static final Supplier<MapCodec<? extends LootItemCondition>> COUNT_BLOCK_CHOPS =
+                REGISTRY.register(CountBlockChopsLootItemCondition.ID.getPath(), () -> CountBlockChopsLootItemCondition.CODEC);
 
-        public static final Supplier<LootItemConditionType> TREE_FELLED =
-                REGISTRY.register(TreeFelledLootItemCondition.ID.getPath(), () -> TreeFelledLootItemCondition.TYPE);
+        public static final Supplier<MapCodec<? extends LootItemCondition>> TREE_FELLED =
+                REGISTRY.register(TreeFelledLootItemCondition.ID.getPath(), () -> TreeFelledLootItemCondition.CODEC);
     }
 }

@@ -1,6 +1,5 @@
 package ht.treechop.common.block;
 
-import ht.treechop.client.model.NeoForgeChoppedLogBakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -14,9 +13,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -66,15 +62,9 @@ public class NeoForgeChoppedLogBlock extends ChoppedLogBlock {
         return getImitatedBlockState(level, pos).canHarvestBlock(level, pos, player);
     }
 
-
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
-        return getImitatedBlockState(level, pos).getCloneItemStack(target, level, pos, player);
-    }
-
-    @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState blockState) {
-        return getImitatedBlockState(level, pos).getBlock().getCloneItemStack(level, pos, blockState);
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
+        return getImitatedBlockState(level, pos).getCloneItemStack(pos, level, includeData, player);
     }
 
     @Override
@@ -110,17 +100,6 @@ public class NeoForgeChoppedLogBlock extends ChoppedLogBlock {
     public static class MyEntity extends ChoppedLogBlock.MyEntity {
         public MyEntity(BlockPos pos, BlockState blockState) {
             super(pos, blockState);
-        }
-
-        @Override
-        public @NotNull ModelData getModelData() {
-            return NeoForgeChoppedLogBakedModel.getModelData(this);
-        }
-
-        @Override
-        protected void rerender() {
-            super.rerender();
-            requestModelDataUpdate();
         }
     }
 }
