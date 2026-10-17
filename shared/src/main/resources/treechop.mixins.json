@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "treechop.mixins.refmap.json",
   "mixins": [
-    "EntityChopSettingsMixin",
-    "LootContextParamSetsAccess"
+    "EntityChopSettingsMixin"
   ],
   "client": [
     "MultiPlayerGameModeMixin",

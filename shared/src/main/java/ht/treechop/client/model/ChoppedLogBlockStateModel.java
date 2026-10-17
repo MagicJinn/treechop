@@ -71,12 +71,24 @@ public abstract class ChoppedLogBlockStateModel implements BlockStateModel {
     }
 
     protected Stream<BakedQuad> getQuads(BlockState strippedState, ChoppedLogShape shape, int radius, RandomSource random, Map<Direction, BlockState> strippedNeighbors) {
-        // 26.3 block models use BlockStateModel parts; full per-shape trimming is not ported yet.
-        List<BakedQuad> quads = new ArrayList<>(getBlockQuads(strippedState, null, random));
-        for (BlockState neighborState : strippedNeighbors.values()) {
-            quads.addAll(getBlockQuads(neighborState, null, random));
-        }
-        return quads.stream();
+        final Direction[] allDirections = {Direction.UP, Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, null};
+        AABB box = shape.getBoundingBox(radius);
+        Vector3 mins = new Vector3(box.minX, box.minY, box.minZ);
+        Vector3 maxes = new Vector3(box.maxX, box.maxY, box.maxZ);
+
+        return Stream.concat(
+                Arrays.stream(allDirections)
+                        .flatMap(side -> getBlockQuads(strippedState, side, random).stream()
+                                .map(quad -> ModelUtil.trimQuad(quad, mins, maxes))),
+                strippedNeighbors.entrySet().stream().flatMap(entry -> {
+                    Direction side = entry.getKey();
+                    BlockState strippedNeighbor = entry.getValue();
+                    Vec3i normal = side.getUnitVec3i().multiply(16);
+                    Vector3 transform = new Vector3(normal.getX(), normal.getY(), normal.getZ());
+                    return getBlockQuads(strippedNeighbor, side.getOpposite(), random).stream()
+                            .map(quad -> ModelUtil.translateQuad(quad, transform));
+                })
+        ).filter(Objects::nonNull);
     }
 
     private static final class EmptyBlockStateModelPart implements BlockStateModelPart {

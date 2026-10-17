@@ -37,6 +37,7 @@ public class TreeChopNeoForge extends TreeChop {
         NeoForgeRegistry.Blocks.REGISTRY.register(modBus);
         NeoForgeRegistry.BlockEntities.REGISTRY.register(modBus);
         NeoForgeRegistry.LootConditionTypes.REGISTRY.register(modBus);
+        NeoForgeRegistry.ContextKeySets.REGISTRY.register(modBus);
 
         modBus.addListener(this::processIMC);
         modBus.addListener((ModConfigEvent.Reloading event) -> ConfigHandler.onReload());

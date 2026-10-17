@@ -42,7 +42,9 @@ public class NeoForgeChoppedLogBlockStateModel extends ChoppedLogBlockStateModel
             BlockState strippedState = ChopUtil.getStrippedState(level, pos, entity.getOriginalState());
             Map<Direction, BlockState> strippedNeighbors = getStrippedNeighbors(level, pos, entity);
             List<BakedQuad> quads = getQuads(strippedState, entity.getShape(), entity.getRadius(), random, strippedNeighbors).toList();
-            parts.add(new QuadListPart(quads));
+            Material.Baked particle = net.minecraft.client.Minecraft.getInstance()
+                    .getModelManager().getBlockStateModelSet().get(strippedState).particleMaterial();
+            parts.add(new QuadListPart(quads, particle));
         }
     }
 
@@ -51,7 +53,7 @@ public class NeoForgeChoppedLogBlockStateModel extends ChoppedLogBlockStateModel
         return super.particleMaterial();
     }
 
-    private record QuadListPart(List<BakedQuad> quads) implements BlockStateModelPart {
+    private record QuadListPart(List<BakedQuad> quads, Material.Baked particle) implements BlockStateModelPart {
         @Override
         public List<BakedQuad> getQuads(Direction direction) {
             if (direction != null) {
@@ -67,7 +69,7 @@ public class NeoForgeChoppedLogBlockStateModel extends ChoppedLogBlockStateModel
 
         @Override
         public Material.Baked particleMaterial() {
-            return ChoppedLogBlockStateModel.defaultParticleMaterial;
+            return particle != null ? particle : ChoppedLogBlockStateModel.defaultParticleMaterial;
         }
 
         @Override

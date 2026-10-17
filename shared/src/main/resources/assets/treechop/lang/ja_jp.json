@@ -58,8 +58,4 @@
   "config.jade.plugin_treechop.plugin": "HT's TreeChop",
   "config.jade.plugin_treechop.show_num_chops_remaining": "伐採回数",
   "config.jade.plugin_treechop.show_tree_block_counts": "ブロック数"
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> upstream/1.21.4

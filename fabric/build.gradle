@@ -18,7 +18,6 @@ jar {
                 "Implementation-Title"    : "$mod_id-$project.name",
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : mod_authors,
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
@@ -26,8 +25,13 @@ jar {
 repositories {
     maven { url = "https://maven.fabricmc.net" }
     maven { url = "https://maven.terraformersmc.com/" }
-    maven { url = "https://maven.parchmentmc.org" }
     maven { url = "https://maven.nucleoid.xyz" }
+}
+
+// Dev-only runtime mods (loom runs) that are not required/published transitive deps
+configurations {
+    localRuntime
+    runtimeClasspath.extendsFrom localRuntime
 }
 
 dependencies {
@@ -40,7 +44,13 @@ dependencies {
 
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:$forgeconfigapiport_version"
 
-    implementation include("eu.pb4:polymer-bundled:$polymer_version")
+    // Optional Polymer: compile against it, load it in runClient/runServer, do not jar-in-jar
+    compileOnly "eu.pb4:polymer-bundled:$polymer_version"
+    localRuntime "eu.pb4:polymer-bundled:$polymer_version"
+    // Sound patcher: silence leaves stand-in FX and play wood from the real block
+    compileOnly "eu.pb4:polymer-sound-patcher:$polymer_version"
+    localRuntime "eu.pb4:polymer-sound-patcher:$polymer_version"
+    include "eu.pb4:polymer-sound-patcher:$polymer_version"
 }
 
 processResources {

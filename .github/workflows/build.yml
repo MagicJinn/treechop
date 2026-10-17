@@ -18,6 +18,9 @@ jobs:
           java-version: "25"
           cache: gradle
 
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+
       - name: Build all loaders
         run: ./gradlew build -x :tuber:test --no-daemon
 

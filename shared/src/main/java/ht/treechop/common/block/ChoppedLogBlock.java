@@ -8,6 +8,7 @@ import ht.treechop.common.config.ConfigHandler;
 import ht.treechop.common.loot.TreeChopLootContextParams;
 import ht.treechop.common.network.ServerUpdateChopsPacket;
 import ht.treechop.common.properties.ChoppedLogShape;
+import ht.treechop.common.properties.ChoppedWood;
 import ht.treechop.common.util.ClassUtil;
 import ht.treechop.common.util.FaceShape;
 import ht.treechop.server.Server;
@@ -40,6 +41,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -63,6 +66,10 @@ import static ht.treechop.common.chop.ChopUtil.isBlockLeaves;
 public abstract class ChoppedLogBlock extends BlockImitator implements IChoppableBlock, EntityBlock, SimpleWaterloggedBlock {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    /** Visual/polymer radius in pixels from center (1–8). Synced so Polymer vanilla clients can shrink. */
+    public static final IntegerProperty RADIUS = IntegerProperty.create("radius", 1, 8);
+    /** Vanilla wood kind for Polymer stand-in textures. */
+    public static final EnumProperty<ChoppedWood> WOOD = EnumProperty.create("wood", ChoppedWood.class);
     public static final int DEFAULT_SUPPORT_FACTOR = 7;
     public static final int DEFAULT_MAX_NUM_CHOPS = 7;
     public static final int DEFAULT_UNCHOPPED_RADIUS = 8;
@@ -75,6 +82,8 @@ public abstract class ChoppedLogBlock extends BlockImitator implements IChoppabl
         this.registerDefaultState(
                 this.getStateDefinition().any()
                         .setValue(WATERLOGGED, Boolean.FALSE)
+                        .setValue(RADIUS, DEFAULT_UNCHOPPED_RADIUS)
+                        .setValue(WOOD, ChoppedWood.OAK)
         );
     }
 
@@ -151,7 +160,7 @@ public abstract class ChoppedLogBlock extends BlockImitator implements IChoppabl
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(WATERLOGGED);
+        builder.add(WATERLOGGED, RADIUS, WOOD);
     }
 
     @Override
@@ -332,6 +341,25 @@ public abstract class ChoppedLogBlock extends BlockImitator implements IChoppabl
             this.unchoppedRadius = unchoppedRadius;
             this.maxNumChops = maxNumChops;
             this.supportFactor = supportFactor;
+            syncVisualBlockState();
+        }
+
+        /** Keeps RADIUS/WOOD blockstate fields in sync for Polymer stand-ins. */
+        private void syncVisualBlockState() {
+            if (level == null || level.isClientSide()) {
+                return;
+            }
+            BlockState state = getBlockState();
+            BlockState updated = state;
+            if (state.hasProperty(RADIUS)) {
+                updated = updated.setValue(RADIUS, getRadius());
+            }
+            if (state.hasProperty(WOOD)) {
+                updated = updated.setValue(WOOD, ChoppedWood.fromBlock(originalState.getBlock()));
+            }
+            if (updated != state) {
+                level.setBlock(worldPosition, updated, Block.UPDATE_CLIENTS);
+            }
         }
 
         public int getChops() {
@@ -340,6 +368,7 @@ public abstract class ChoppedLogBlock extends BlockImitator implements IChoppabl
 
         public void setChops(int chops) {
             this.chops = chops;
+            syncVisualBlockState();
         }
 
         public ChoppedLogShape getShape() {
@@ -356,6 +385,7 @@ public abstract class ChoppedLogBlock extends BlockImitator implements IChoppabl
 
         public void setOriginalState(BlockState originalState) {
             this.originalState = originalState;
+            syncVisualBlockState();
         }
 
         public int getUnchoppedRadius() {

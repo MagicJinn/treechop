@@ -3,9 +3,11 @@ package ht.treechop.common;
 import ht.treechop.TreeChop;
 import ht.treechop.common.block.NeoForgeChoppedLogBlock;
 import ht.treechop.common.loot.CountBlockChopsLootItemCondition;
+import ht.treechop.common.loot.TreeChopLootContextParams;
 import ht.treechop.common.loot.TreeFelledLootItemCondition;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -52,5 +54,13 @@ public class NeoForgeRegistry {
 
         public static final Supplier<MapCodec<? extends LootItemCondition>> TREE_FELLED =
                 REGISTRY.register(TreeFelledLootItemCondition.ID.getPath(), () -> TreeFelledLootItemCondition.CODEC);
+    }
+
+    public static class ContextKeySets {
+        public static final DeferredRegister<ContextKeySet> REGISTRY =
+                DeferredRegister.create(Registries.CONTEXT_KEY_SET, TreeChop.MOD_ID);
+
+        public static final Supplier<ContextKeySet> CHOPPING =
+                REGISTRY.register(TreeChopLootContextParams.SET_ID.getPath(), () -> TreeChopLootContextParams.SET);
     }
 }

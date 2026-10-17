@@ -1,5 +1,8 @@
 {
-  "variants": {
-    "chopped_log": { "model": "treechop:block/chopped_log" }
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "minecraft:block/stripped_oak_log_top",
+    "side": "minecraft:block/stripped_oak_log",
+    "particle": "minecraft:block/stripped_oak_log"
   }
 }

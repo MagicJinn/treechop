@@ -6,6 +6,7 @@ import ht.treechop.api.ITreeChopAPIProvider;
 import ht.treechop.common.FabricCommon;
 import ht.treechop.common.config.ConfigHandler;
 import ht.treechop.common.loot.CountBlockChopsLootItemCondition;
+import ht.treechop.common.loot.TreeChopLootContextParams;
 import ht.treechop.common.loot.TreeFelledLootItemCondition;
 import ht.treechop.common.network.ClientRequestSettingsPacket;
 import ht.treechop.common.network.ServerConfirmSettingsPacket;
@@ -61,14 +62,15 @@ public class TreeChopFabric extends TreeChop implements ModInitializer {
         FabricServer.initialize();
         FabricLoader.getInstance().getObjectShare().put("treechop:api_provider", (ITreeChopAPIProvider) TreeChopFabricAPI::new);
 
-        // Compat
-        TreeChopFabricAPITest.init();
-        TreeChopPolymer.init();
-
         Registry.register(BuiltInRegistries.SOUND_EVENT, CHOP_WOOD, CHOP_WOOD_EVENT.get());
 
         Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, CountBlockChopsLootItemCondition.ID, CountBlockChopsLootItemCondition.CODEC);
         Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, TreeFelledLootItemCondition.ID, TreeFelledLootItemCondition.CODEC);
+        Registry.register(BuiltInRegistries.CONTEXT_KEY_SET, TreeChopLootContextParams.SET_ID, TreeChopLootContextParams.SET);
+
+        // Compat (after registry entries Polymer marks as server-only)
+        TreeChopFabricAPITest.init();
+        TreeChopPolymer.init();
 
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> {
             ServerCommands.register(dispatcher);
