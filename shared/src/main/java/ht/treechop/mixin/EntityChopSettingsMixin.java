@@ -36,7 +36,7 @@ public class EntityChopSettingsMixin implements ChoppingEntity {
 
     @Inject(method = "load", at = @At("HEAD"))
     public void injectDataLoading(CompoundTag tag, CallbackInfo info) {
-        CompoundTag data = tag.getCompound(KEY).orElseGet(CompoundTag::new);
+        CompoundTag data = tag.getCompound(KEY);
         chopSettings = (new SyncedChopData(new ChopSettings())).readSaveData(data);
     }
 }

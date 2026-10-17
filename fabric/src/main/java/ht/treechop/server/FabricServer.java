@@ -13,19 +13,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.util.function.BiPredicate;
-
 public class FabricServer extends Server implements DedicatedServerModInitializer {
-
-    private static BiPredicate<ServerPlayer, CustomPacketPayload> packetFilter = (player, payload) -> true;
 
     @Override
     public void onInitializeServer() {
         // Only run on dedicated servers, not local servers!
-    }
-
-    public static void setPacketFilter(BiPredicate<ServerPlayer, CustomPacketPayload> filter) {
-        packetFilter = filter;
     }
 
     public static void initialize() {
@@ -51,14 +43,12 @@ public class FabricServer extends Server implements DedicatedServerModInitialize
     @Override
     public void broadcast(ServerLevel level, BlockPos pos, CustomPacketPayload payload) {
         for (ServerPlayer player : PlayerLookup.tracking(level, pos)) {
-            sendTo(player, payload);
+            instance().sendTo(player, payload);
         }
     }
 
     @Override
     public void sendTo(ServerPlayer player, CustomPacketPayload payload) {
-        if (packetFilter.test(player, payload)) {
-            ServerPlayNetworking.send(player, payload);
-        }
+        ServerPlayNetworking.send(player, payload);
     }
 }

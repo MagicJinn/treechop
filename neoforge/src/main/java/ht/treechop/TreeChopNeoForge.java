@@ -2,12 +2,9 @@ package ht.treechop;
 
 import ht.treechop.api.TreeChopAPI;
 import ht.treechop.client.NeoForgeClientProxy;
-import ht.treechop.common.NeoForgeCommon;
 import ht.treechop.common.NeoForgePlatform;
 import ht.treechop.common.config.ConfigHandler;
 import ht.treechop.common.NeoForgeRegistry;
-import ht.treechop.common.network.NeoForgePacketHandler;
-import ht.treechop.server.NeoForgeServer;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -18,6 +15,7 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.InterModProcessEvent;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.NeoForgeConfig;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
@@ -41,13 +39,10 @@ public class TreeChopNeoForge extends TreeChop {
         modBus.addListener(this::processIMC);
         modBus.addListener((ModConfigEvent.Reloading event) -> ConfigHandler.onReload());
         modBus.addListener((RegisterEvent event) -> event.register(Registries.SOUND_EVENT, helper -> helper.register(CHOP_WOOD, CHOP_WOOD_EVENT.get())));
-        modBus.addListener(NeoForgePacketHandler::register);
-        modBus.addListener(NeoForgeServer::onCommonSetup);
 
         NeoForge.EVENT_BUS.addListener((TagsUpdatedEvent event) -> ConfigHandler.updateTags());
-        NeoForge.EVENT_BUS.addListener(NeoForgeCommon::onBreakEvent);
 
-        if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
+        if (FMLLoader.getDist() == Dist.CLIENT) {
             NeoForgeClientProxy.init(modBus);
         }
 

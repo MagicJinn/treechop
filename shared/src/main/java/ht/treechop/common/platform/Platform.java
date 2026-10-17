@@ -6,11 +6,11 @@ import ht.treechop.api.FellData;
 import ht.treechop.api.TreeData;
 import ht.treechop.common.chop.ChopResult;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -32,9 +32,9 @@ public interface Platform {
 
     BlockEntityType<?> getChoppedLogBlockEntity();
 
-    Identifier getResourceLocationForBlock(Block block);
+    ResourceLocation getResourceLocationForBlock(Block block);
 
-    Identifier getResourceLocationForItem(Item item);
+    ResourceLocation getResourceLocationForItem(Item item);
 
     BlockState getStrippedState(BlockAndTintGetter level, BlockPos pos, BlockState state);
 

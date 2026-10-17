@@ -1,6 +1,6 @@
 plugins {
-    id "net.fabricmc.fabric-loom" version "$loom_version" apply false
-    id "org.spongepowered.gradle.vanilla" version "0.3.2" apply false
+    id "fabric-loom" version "1.7-SNAPSHOT" apply false
+    id "org.spongepowered.gradle.vanilla" version "0.2.1-SNAPSHOT" apply false
     id "org.spongepowered.mixin" version "0.7-SNAPSHOT" apply false
 }
 
@@ -10,12 +10,12 @@ subprojects {
     apply plugin: "idea"
     apply plugin: 'maven-publish'
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(Integer.parseInt(rootProject.findProperty("java_version").toString()))
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
     repositories {
         mavenCentral()
         maven { url "https://www.cursemaven.com" }
-        maven { url = rootProject.file("publishing") }
+        maven { url "file://${rootDir}/publishing" }
         maven { url = "https://api.modrinth.com/maven" }
         maven { url "https://maven.bai.lol" }
         maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
@@ -26,7 +26,14 @@ subprojects {
     }
 
     dependencies {
+        testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
+        testImplementation group: "org.hamcrest", name: "hamcrest", version: "2.2"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
         implementation "com.google.code.findbugs:jsr305:3.0.2"
+    }
+
+    test {
+        useJUnitPlatform()
     }
 
     publishing {
@@ -37,13 +44,13 @@ subprojects {
         }
         repositories {
             maven {
-                url = rootProject.file("publishing")
+                url "file://${rootDir}/publishing"
             }
         }
     }
 
     tasks.withType(JavaCompile).configureEach {
         it.options.encoding = "UTF-8"
-        it.options.release = Integer.parseInt(rootProject.findProperty("java_version").toString())
+        it.options.release = 21
     }
 }

@@ -11,11 +11,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -92,12 +92,12 @@ public class FabricPlatform implements Platform {
     }
 
     @Override
-    public Identifier getResourceLocationForBlock(Block block) {
+    public ResourceLocation getResourceLocationForBlock(Block block) {
         return BuiltInRegistries.BLOCK.getKey(block);
     }
 
     @Override
-    public Identifier getResourceLocationForItem(Item item) {
+    public ResourceLocation getResourceLocationForItem(Item item) {
         return BuiltInRegistries.ITEM.getKey(item);
     }
 

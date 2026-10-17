@@ -1,9 +1,8 @@
 package ht.treechop.client.gui.widget;
 
-
+import net.minecraft.client.gui.GuiGraphics;
 import ht.treechop.client.gui.util.Sprite;
-
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -26,10 +25,12 @@ public class SpriteButtonWidget extends AbstractWidget {
         onPress.run();
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
-    public void extractWidgetRenderState(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTicks) {
+        Sprite.setRenderState(this.alpha);
         Sprite sprite = isHoveredOrFocused() ? highlightedSprite : this.sprite;
-        sprite.blit(gui, getX(), getY(), this.alpha);
+        sprite.blit(gui, getX(), getY());
     }
 
     @Override

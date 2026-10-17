@@ -1,8 +1,13 @@
 package ht.treechop.compat;
 
-/**
- * Mod Menu integration disabled until a 26.3-compatible Mod Menu API is available.
- */
-public final class ModMenu {
-    private ModMenu() {}
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import com.terraformersmc.modmenu.api.ModMenuApi;
+import ht.treechop.client.gui.screen.ClientSettingsScreen;
+
+public class ModMenu implements ModMenuApi {
+
+    @Override
+    public ConfigScreenFactory<?> getModConfigScreenFactory() {
+        return ClientSettingsScreen::new;
+    }
 }

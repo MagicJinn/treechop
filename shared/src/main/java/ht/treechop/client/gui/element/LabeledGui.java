@@ -1,10 +1,9 @@
 package ht.treechop.client.gui.element;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 
-
+import net.minecraft.client.gui.GuiGraphics;
 import ht.treechop.client.gui.widget.TextWidget;
 import net.minecraft.client.gui.Font;
-
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -57,13 +56,13 @@ public class LabeledGui extends NestedGui {
     }
 
     @Override
-    public void extractWidgetRenderState(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTicks) {
         int center = getBox().getCenterX() + (leftColumnWidth - rightcolumnWidth) / 2;
         this.label.setX(center - COLUMN_PADDING + (rightAlignLabels ? 0 : -leftColumnWidth));
         this.label.setY(getBox().getCenterY() - 3);
-        this.label.extractRenderState(gui, mouseX, mouseY, partialTicks);
+        this.label.render(gui, mouseX, mouseY, partialTicks);
         this.gui.setBox(center + COLUMN_PADDING, getBox().getTop(), rightcolumnWidth, getBox().getHeight());
-        this.gui.extractRenderState(gui, mouseX, mouseY, partialTicks);
+        this.gui.render(gui, mouseX, mouseY, partialTicks);
     }
 
     public void setColumnWidths(int biggestLeftColumnWidth, int biggestRightColumnWidth) {

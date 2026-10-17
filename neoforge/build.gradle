@@ -1,5 +1,5 @@
 plugins {
-    id "net.neoforged.moddev" version "2.0.148"
+    id "net.neoforged.moddev" version "2.0.77"
 }
 
 version = mod_version
@@ -19,6 +19,11 @@ processResources {
 neoForge {
     version = project.neo_version
 
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.minecraft_version
+    }
+
     runs {
         client {
             client()
@@ -33,6 +38,11 @@ neoForge {
             type = "gameTestServer"
         }
 
+        data {
+            data()
+            programArguments.addAll "--mod", project.mod_id, "--all", "--output", file("src/generated/resources/").getAbsolutePath(), "--existing", file("src/main/resources/").getAbsolutePath()
+        }
+
         configureEach {
             // "SCAN": For mods scan.
             // "REGISTRIES": For firing of registry events.
@@ -40,7 +50,7 @@ neoForge {
             systemProperty "forge.logging.markers", "REGISTRIES"
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-//            systemProperty "neoforge.enabledGameTestNamespaces", project.mod_id
+            systemProperty "neoforge.enabledGameTestNamespaces", project.mod_id
 
             // Related: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             logLevel = org.slf4j.event.Level.DEBUG
@@ -59,6 +69,7 @@ configurations {
 }
 
 dependencies {
+    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
     implementation "net.sf.jopt-simple:jopt-simple:5.0.4"
 
     implementation project(":shared")
@@ -66,33 +77,56 @@ dependencies {
 
 //    localRuntime "curse.maven:create-328085:4835191"
 
-    compileOnly "curse.maven:multi-mine-227887:6036140"
-    localRuntime "curse.maven:multi-mine-227887:6036140"
+    // Compile against the API
+    compileOnly "mcp.mobius.waila:wthit-api:neo-12.5.1"
 
-    compileOnly "curse.maven:integrated-dynamics-236307:6678480"
-    localRuntime "curse.maven:integrated-dynamics-236307:6678480"
-    localRuntime "curse.maven:common-capabilities-247007:6678478"
-    localRuntime "curse.maven:cyclops-core-232758:6678515"
+    // Run against the full jar
+//    localRuntime "mcp.mobius.waila:wthit:neo-12.5.1"
+//    localRuntime "lol.bai:badpackets:neo-0.8.1"
+
+    compileOnly "curse.maven:jade-324717:5591256"
+    localRuntime "curse.maven:jade-324717:5591256"
+
+    compileOnly "curse.maven:the-one-probe-245211:5502323"
+//    localRuntime "curse.maven:the-one-probe-245211:5502323"
+
+//    compileOnly "curse.maven:rubidium-574856:4952685"
+//    localRuntime "curse.maven:rubidium-574856:4952685"
+
+    compileOnly "curse.maven:multi-mine-227887:5733888"
+//    localRuntime "curse.maven:multi-mine-227887:5733888"
+
+    compileOnly "curse.maven:integrated-dynamics-236307:6250036"
+//    localRuntime "curse.maven:integrated-dynamics-236307:6250036"
+//    localRuntime "curse.maven:common-capabilities-247007:6173956"
+//    localRuntime "curse.maven:cyclops-core-232758:6230091"
 
 //    localRuntime "curse.maven:terrablender-563928:4647094"
-//    localRuntime "curse.maven:glitchcore-955399:6054289"
-//    localRuntime "curse.maven:biomes-o-plenty-220318:6384687"
+//    localRuntime "curse.maven:biomes-o-plenty-220318:4617259"
 //    localRuntime "curse.maven:regions-unexplored-659110:4599808"
+//    localRuntime "curse.maven:pams-harvestcraft-2-trees-365460:4625518"
+//    localRuntime "curse.maven:oh-the-biomes-youll-go-247560:xxx"
 //    localRuntime "curse.maven:tropicraft-254794:4617294"
 //    localRuntime "curse.maven:mystics-biomes-397962:4677470"
+
+    compileOnly "curse.maven:project-mmo-353935:5425305" // https://github.com/Caltinor/Project-MMO-2.0
+//    localRuntime "curse.maven:project-mmo-353935:5425305"
 
 //    localRuntime "curse.maven:placebo-283644:6105436"
 //    localRuntime "curse.maven:apothic-attributes-898963:6148951"
 //    localRuntime "curse.maven:apothic-enchanting-1063926:6084297"
 
-    localRuntime "curse.maven:carry-on-274259:6449626"
+//    compileOnly "curse.maven:carry-on-274259:4160388"
+//    localRuntime "curse.maven:carry-on-274259:4160388"
 
-//    localRuntime "curse.maven:enhanced-farming-285105:6893487"
+//    localRuntime "curse.maven:terrablender-563928:4205732"
+//    localRuntime "curse.maven:regions-unexplored-659110:4406301"
+//    localRuntime "curse.maven:enhanced-farming-285105:4280679"
 
 //    localRuntime "curse.maven:selene-499980:4410933"
 //    localRuntime "curse.maven:immersive-weathering-forge-592449:4401359"
 
-//    localRuntime "curse.maven:structure-gel-api-378802:6128766"
+//    localRuntime "curse.maven:structure-gel-api-378802:4029363"
 //    localRuntime "curse.maven:blue-skies-312918:3966273"
 //    localRuntime "curse.maven:caupona-656147:4036587"
 
@@ -118,9 +152,9 @@ sourceSets.each {
     it.java.destinationDirectory = dir
 }
 
-tasks.named("compileJava", JavaCompile).configure {
-    source(project(":shared").sourceSets.main.java)
-    source(project(":tuber").sourceSets.main.java)
+tasks.withType(JavaCompile).configureEach {
+    source(project(":shared").sourceSets.main.allSource)
+    source(project(":tuber").sourceSets.main.allSource)
 }
 
 idea {

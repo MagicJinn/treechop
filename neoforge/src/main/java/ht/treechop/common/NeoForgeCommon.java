@@ -9,11 +9,22 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 
+
+@EventBusSubscriber(modid = TreeChop.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class NeoForgeCommon {
 
-    public static void onBreakEvent(BreakBlockEvent event) {
+    @SubscribeEvent
+    public static void onTagsUpdated(TagsUpdatedEvent event) {
+        ConfigHandler.updateTags();
+    }
+
+    @SubscribeEvent
+    public static void onBreakEvent(BlockEvent.BreakEvent event) {
         if (event.isCanceled()
                 || !(event.getLevel() instanceof ServerLevel level)
                 || !(event.getPlayer() instanceof ServerPlayer agent)) {

@@ -32,7 +32,7 @@ public class ConfirmedSetting extends Setting {
         ACCEPT {
             @Override
             public void run(ConfirmedSetting setting) {
-                if (Minecraft.getInstance().gui.screen() == null) {
+                if (Minecraft.getInstance().screen == null) {
                     String fieldName = setting.getField().getFancyName();
                     String valueName = setting.getField().getValueName(setting.getValue());
                     if (ConfigHandler.CLIENT.showFeedbackMessages.get()) {
@@ -48,7 +48,7 @@ public class ConfirmedSetting extends Setting {
         DENY {
             @Override
             public void run(ConfirmedSetting setting) {
-                if (Minecraft.getInstance().gui.screen() == null) {
+                if (Minecraft.getInstance().screen == null) {
                     String fieldName = setting.getField().getFancyName();
                     String valueName = setting.getField().getValueName(setting.getValue());
                     if (ConfigHandler.CLIENT.showFeedbackMessages.get()) {
