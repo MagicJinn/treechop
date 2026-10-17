@@ -9,6 +9,8 @@ import ht.treechop.common.chop.ChopUtil;
 import ht.treechop.common.config.ConfigHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
@@ -57,7 +59,29 @@ public class ChopIndicator {
     }
 
     public static boolean blockCanBeChopped(BlockPos pos) throws TreeChopException {
-        ClientChopSettings settings = Client.getChopSettings();
-        return ChopUtil.isBlockChoppable(Minecraft.getInstance().level, pos);
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer player = minecraft.player;
+        ClientLevel level = minecraft.level;
+        ClientChopSettings chopSettings = Client.getChopSettings();
+
+        if (player == null || level == null) {
+            return false;
+        }
+
+        boolean wantToChop = ChopUtil.canChopWithTool(player, level, pos)
+                && ChopUtil.playerWantsToChop(player, chopSettings);
+        if (wantToChop) {
+            return isAProperTree(pos, level, chopSettings);
+        }
+
+        return false;
+    }
+
+    private static boolean isAProperTree(BlockPos pos, ClientLevel level, ClientChopSettings chopSettings) throws TreeChopException {
+        try {
+            return Client.treeCache.getTree(level, pos).isAProperTree(chopSettings.getTreesMustHaveLeaves());
+        } catch (Exception e) {
+            throw new TreeChopException(String.format("Parameters: %s, %s, %s", pos, level, chopSettings), e);
+        }
     }
 }
