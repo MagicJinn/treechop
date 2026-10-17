@@ -44,13 +44,11 @@ dependencies {
 
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:$forgeconfigapiport_version"
 
-    // Optional Polymer: compile against it, load it in runClient/runServer, do not jar-in-jar
+    // Optional Polymer: compile against it, load it in runClient/runServer, do not jar-in-jar.
+    // Do not pull polymer-sound-patcher: it rewrites vanilla wood hits into server-only sounds
+    // in the Polymer RP, which mutes TreeChop clients that sync the real chopped-log block.
     compileOnly "eu.pb4:polymer-bundled:$polymer_version"
     localRuntime "eu.pb4:polymer-bundled:$polymer_version"
-    // Sound patcher: silence leaves stand-in FX and play wood from the real block
-    compileOnly "eu.pb4:polymer-sound-patcher:$polymer_version"
-    localRuntime "eu.pb4:polymer-sound-patcher:$polymer_version"
-    include "eu.pb4:polymer-sound-patcher:$polymer_version"
 }
 
 processResources {

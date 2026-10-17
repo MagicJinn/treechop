@@ -3,6 +3,7 @@ package ht.treechop.client.model;
 import ht.treechop.common.block.ChoppedLogBlock;
 import ht.treechop.common.chop.ChopUtil;
 import ht.treechop.common.properties.ChoppedLogShape;
+import ht.treechop.common.properties.ChoppedWood;
 import ht.tuber.math.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
@@ -15,6 +16,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
@@ -46,6 +48,34 @@ public abstract class ChoppedLogBlockStateModel implements BlockStateModel {
         } else {
             return Collections.emptyMap();
         }
+    }
+
+    /**
+     * Prefer the synced {@code WOOD} property when the BE still has the default oak
+     * original (NBT not arrived yet). Once the BE has a real original, use that
+     * (needed for modded woods that map to {@link ChoppedWood#OAK}).
+     */
+    protected static BlockState visualLogState(BlockState blockState, @Nullable ChoppedLogBlock.MyEntity entity) {
+        BlockState original = entity != null ? entity.getOriginalState() : null;
+        boolean beLooksDefault = original == null || original.is(Blocks.OAK_LOG);
+        if (blockState.hasProperty(ChoppedLogBlock.WOOD)) {
+            ChoppedWood wood = blockState.getValue(ChoppedLogBlock.WOOD);
+            if (wood != ChoppedWood.OAK && beLooksDefault) {
+                return wood.fallbackOriginalState();
+            }
+        }
+        return original != null ? original : Blocks.OAK_LOG.defaultBlockState();
+    }
+
+    protected static int visualRadius(BlockState blockState, @Nullable ChoppedLogBlock.MyEntity entity) {
+        if (blockState.hasProperty(ChoppedLogBlock.RADIUS)) {
+            return blockState.getValue(ChoppedLogBlock.RADIUS);
+        }
+        return entity != null ? entity.getRadius() : ChoppedLogBlock.DEFAULT_UNCHOPPED_RADIUS;
+    }
+
+    protected static ChoppedLogShape visualShape(@Nullable ChoppedLogBlock.MyEntity entity) {
+        return entity != null ? entity.getShape() : ChoppedLogShape.PILLAR_Y;
     }
 
     protected List<BakedQuad> getBlockQuads(BlockState blockState, @Nullable Direction side, RandomSource rand) {

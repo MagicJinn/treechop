@@ -40,7 +40,6 @@
     "java": ">=25"
   },
   "suggests": {
-    "polymer-bundled": "*",
-    "polymer-sound-patcher": "*"
+    "polymer-bundled": "*"
   }
 }

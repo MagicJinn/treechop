@@ -38,14 +38,34 @@ public class NeoForgeChoppedLogBlockStateModel extends ChoppedLogBlockStateModel
 
     @Override
     public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
-        if (level.getBlockEntity(pos) instanceof ChoppedLogBlock.MyEntity entity) {
-            BlockState strippedState = ChopUtil.getStrippedState(level, pos, entity.getOriginalState());
-            Map<Direction, BlockState> strippedNeighbors = getStrippedNeighbors(level, pos, entity);
-            List<BakedQuad> quads = getQuads(strippedState, entity.getShape(), entity.getRadius(), random, strippedNeighbors).toList();
-            Material.Baked particle = net.minecraft.client.Minecraft.getInstance()
-                    .getModelManager().getBlockStateModelSet().get(strippedState).particleMaterial();
-            parts.add(new QuadListPart(quads, particle));
+        BlockState world = level.getBlockState(pos);
+        if (!(world.getBlock() instanceof ChoppedLogBlock)) {
+            world = state;
         }
+        ChoppedLogBlock.MyEntity entity = level.getBlockEntity(pos) instanceof ChoppedLogBlock.MyEntity e ? e : null;
+        BlockState strippedState;
+        if (world.hasProperty(ChoppedLogBlock.WOOD)
+                && world.getValue(ChoppedLogBlock.WOOD) != ht.treechop.common.properties.ChoppedWood.OAK) {
+            strippedState = world.getValue(ChoppedLogBlock.WOOD).polymerDisplayBlockState();
+        } else if (entity != null) {
+            // WOOD=OAK also covers modded woods; BE original is the source of truth.
+            strippedState = ChopUtil.getStrippedState(level, pos, entity.getOriginalState());
+        } else {
+            strippedState = ChopUtil.getStrippedState(level, pos, visualLogState(world, null));
+        }
+        Map<Direction, BlockState> strippedNeighbors = entity != null
+                ? getStrippedNeighbors(level, pos, entity)
+                : Collections.emptyMap();
+        List<BakedQuad> quads = getQuads(
+                strippedState,
+                visualShape(entity),
+                visualRadius(world, entity),
+                random,
+                strippedNeighbors
+        ).toList();
+        Material.Baked particle = net.minecraft.client.Minecraft.getInstance()
+                .getModelManager().getBlockStateModelSet().get(strippedState).particleMaterial();
+        parts.add(new QuadListPart(quads, particle));
     }
 
     @Override

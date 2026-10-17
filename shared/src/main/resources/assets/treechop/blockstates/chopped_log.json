@@ -1,7 +1,17 @@
 {
   "multipart": [
-    {
-      "apply": { "model": "treechop:block/chopped_log" }
-    }
+    { "when": { "wood": "oak" }, "apply": { "model": "treechop:block/chopped_log_oak" } },
+    { "when": { "wood": "spruce" }, "apply": { "model": "treechop:block/chopped_log_spruce" } },
+    { "when": { "wood": "birch" }, "apply": { "model": "treechop:block/chopped_log_birch" } },
+    { "when": { "wood": "jungle" }, "apply": { "model": "treechop:block/chopped_log_jungle" } },
+    { "when": { "wood": "acacia" }, "apply": { "model": "treechop:block/chopped_log_acacia" } },
+    { "when": { "wood": "dark_oak" }, "apply": { "model": "treechop:block/chopped_log_dark_oak" } },
+    { "when": { "wood": "mangrove" }, "apply": { "model": "treechop:block/chopped_log_mangrove" } },
+    { "when": { "wood": "cherry" }, "apply": { "model": "treechop:block/chopped_log_cherry" } },
+    { "when": { "wood": "pale_oak" }, "apply": { "model": "treechop:block/chopped_log_pale_oak" } },
+    { "when": { "wood": "poplar" }, "apply": { "model": "treechop:block/chopped_log_poplar" } },
+    { "when": { "wood": "crimson" }, "apply": { "model": "treechop:block/chopped_log_crimson" } },
+    { "when": { "wood": "warped" }, "apply": { "model": "treechop:block/chopped_log_warped" } },
+    { "when": { "wood": "mushroom" }, "apply": { "model": "treechop:block/chopped_log_mushroom" } }
   ]
 }

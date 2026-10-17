@@ -257,7 +257,8 @@ public class ChopUtil {
         } else {
             final float volume = .3f;
             final float pitch = 1f;
-            level.playSound(thwacker, pos, TreeChop.CHOP_WOOD_EVENT.get(), SoundSource.BLOCKS, volume, pitch);
+            // null except-player so the chopper hears every progression (not only observers).
+            level.playSound(null, pos, TreeChop.CHOP_WOOD_EVENT.get(), SoundSource.BLOCKS, volume, pitch);
             level.addDestroyBlockEffect(pos, state);
         }
     }

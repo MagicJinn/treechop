@@ -204,22 +204,30 @@ public abstract class ChoppedLogBlock extends BlockImitator implements IChoppabl
                             .map(fellableBlock -> fellableBlock.getSupportFactor(level, pos, blockState))
                             .orElse(1.0);
 
-                    BlockState newBlockState = (blockState.is(this) ? blockState : getPlacementState(level, pos));
-                    if (level.setBlockAndUpdate(pos, newBlockState)
+                    BlockState oldState = level.getBlockState(pos);
+                    BlockState newBlockState = getPlacementState(level, pos, blockState, chopZeroRadius, newNumChops);
+                    // Place without client notify, finish BE, then sync once (avoids oak flash).
+                    if (level.setBlock(pos, newBlockState, Block.UPDATE_NEIGHBORS)
                             && level.getBlockEntity(pos) instanceof MyEntity entity
                             && level instanceof ServerLevel serverLevel) {
-                        entity.setShape(getPlacementShape(level, pos, blockState));
-                        entity.setOriginalState(blockState);
-                        entity.setParameters(chopZeroRadius, maxNumChops, supportFactor);
+                        entity.initializeChop(
+                                blockState,
+                                getPlacementShape(level, pos, blockState),
+                                chopZeroRadius,
+                                maxNumChops,
+                                supportFactor,
+                                newNumChops
+                        );
 
                         if (ConfigHandler.COMMON.dropLootOnFirstChop.get()) {
                             Block.getDrops(blockState, serverLevel, pos, entity, player, tool)
                                     .forEach(stack -> popResource(level, pos, stack));
                         }
-                    }
-                }
 
-                if (level.getBlockEntity(pos) instanceof MyEntity entity) {
+                        level.sendBlockUpdated(pos, oldState, entity.getBlockState(), Block.UPDATE_CLIENTS);
+                        entity.setChanged();
+                    }
+                } else if (level.getBlockEntity(pos) instanceof MyEntity entity) {
                     entity.setChops(newNumChops);
                     entity.setChanged();
                 }
@@ -260,6 +268,13 @@ public abstract class ChoppedLogBlock extends BlockImitator implements IChoppabl
     private BlockState getPlacementState(Level level, BlockPos pos) {
         return defaultBlockState()
                 .setValue(WATERLOGGED, shouldPlaceAsWaterlogged(level, pos));
+    }
+
+    /** First chop: bake WOOD/RADIUS into the placed state so clients never flash oak. */
+    private BlockState getPlacementState(Level level, BlockPos pos, BlockState originalLog, int unchoppedRadius, int chops) {
+        return getPlacementState(level, pos)
+                .setValue(WOOD, ChoppedWood.fromBlock(originalLog.getBlock()))
+                .setValue(RADIUS, Math.max(unchoppedRadius - chops, 1));
     }
 
     private boolean shouldPlaceAsWaterlogged(Level level, BlockPos pos) {
@@ -327,11 +342,35 @@ public abstract class ChoppedLogBlock extends BlockImitator implements IChoppabl
 
         public MyEntity(BlockPos pos, BlockState blockState) {
             super(TreeChop.platform.getChoppedLogBlockEntity(), pos, blockState);
+            // Seed from WOOD so the first client frame matches before BE NBT arrives.
+            if (blockState.hasProperty(WOOD)) {
+                this.originalState = blockState.getValue(WOOD).fallbackOriginalState();
+            }
         }
 
         @Override
         public int hashCode() {
             return Objects.hash(level, worldPosition, originalState, shape, chops, unchoppedRadius, maxNumChops, supportFactor);
+        }
+
+        /**
+         * First chop: set all BE fields before clients are told the block exists.
+         */
+        public void initializeChop(
+                BlockState original,
+                ChoppedLogShape shape,
+                int unchoppedRadius,
+                int maxNumChops,
+                double supportFactor,
+                int chops
+        ) {
+            this.originalState = original;
+            this.shape = shape;
+            this.unchoppedRadius = unchoppedRadius;
+            this.maxNumChops = maxNumChops;
+            this.supportFactor = supportFactor;
+            this.chops = chops;
+            syncVisualBlockState();
         }
 
         /**
